@@ -2,8 +2,12 @@
 
 ## 安装 Setup
 ```bash
-
+bash  -c "$(curl -fsSL https://raw.githubusercontent.com/huangyanxiong01/auto-unlock-netease-music/main/install.sh) -s 5620 -h 5621"
 ```
+
+## 升级到最新代理服务
+
+你只需要重新执行安装步骤即可
 
 ## 示例 Example
 ```bash
