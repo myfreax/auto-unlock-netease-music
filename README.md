@@ -28,3 +28,7 @@ OPTIONS:
   -p, --proxy              Specify http proxy for download github file
   --help                   Show this help
 ```
+
+## 致谢
+
+[nondanee/UnblockNeteaseMusic](https://github.com/nondanee/UnblockNeteaseMusic)
