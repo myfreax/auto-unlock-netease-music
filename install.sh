@@ -1,5 +1,6 @@
 #! /usr/bin/env bash
 #set -x
+#global vars
 node=$(command -v node)
 client=$(command -v netease-cloud-music)
 proxy=""
@@ -7,6 +8,7 @@ httpsPort="5620"
 httpPort="5621"
 installDir="$HOME/.config/netease"
 proxyDir="$installDir/proxy"
+ingore="--ignore-certificate-errors"
 
 # COLORS
 CDEF=" \033[0m"                                     # default color
@@ -130,7 +132,6 @@ function setupNginx {
 
 
 function setupExec {
-  ingore="--ignore-certificate-errors"
   desktop="/usr/share/applications/netease-cloud-music.desktop"
   if [[ -f $desktop ]];then
     execCommand=$(grep Exec=netease-cloud-music $desktop)
@@ -146,18 +147,28 @@ function setupExec {
   
 }
 
+function restartClient {
+  processes=($(ps aux | grep netease-cloud-music | grep -v grep | awk '{print $2}'))
+  for p in $processes; do
+    kill -9 $p
+  done
+  nohup netease-cloud-music $ingore &>/dev/null &
+  prompt -s "Success: Restart netease-cloud-music."
+}
+
 function setup {
-    mkdir -p $installDir
-    prompt -i "Info: Install dependencies"
-    sudo apt-get install nginx wget curl unzip -y > /dev/null
-    if [[ $proxy != "" ]];then
-        export http_proxy=$proxy
-    fi
-    download
-    setupService
-    setupNginx
-    setupHosts
-    setupExec
+  mkdir -p $installDir
+  prompt -i "Info: Install dependencies"
+  sudo apt-get install nginx wget curl unzip -y > /dev/null
+  if [[ $proxy != "" ]];then
+      export http_proxy=$proxy
+  fi
+  download
+  setupService
+  setupNginx
+  setupHosts
+  setupExec
+  restartClient
 }
 
 if [[ client == "" ]];then
