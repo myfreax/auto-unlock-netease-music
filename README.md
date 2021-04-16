@@ -30,7 +30,7 @@ OPTIONS:
 ```
 
 ## Windows?
-欢迎你的Pr
+欢迎你的PR
 
 ## 致谢
 
