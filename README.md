@@ -29,6 +29,9 @@ OPTIONS:
   --help                   Show this help
 ```
 
+## Windows?
+欢迎你的Pr
+
 ## 致谢
 
 [nondanee/UnblockNeteaseMusic](https://github.com/nondanee/UnblockNeteaseMusic)
