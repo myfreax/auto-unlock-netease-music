@@ -1,9 +1,27 @@
 # 自动解锁网易云音乐脚本
+网易音乐代理服务将会在开机时自动启动，不必每次都需要手动启动
+
+基于以下技术构建
+- Nginx
+- Systemd
+- Node
+- /etc/hosts
+
+
 
 ## 安装 Setup
 ```bash
 bash  -c "$(curl -fsSL https://raw.githubusercontent.com/huangyanxiong01/auto-unlock-netease-music/main/install.sh) -s 5620 -h 5621"
 ```
+
+## 测试通过
+- [x] Ubuntu 20.04
+- [ ] Ubuntu 18.04
+- [ ] Centos
+- [ ] ArchLinux
+- [ ] LinuxMint
+- [ ] Debian Linux
+> 欢迎测试提交PR
 
 ## 升级到最新代理服务
 
