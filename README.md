@@ -7,7 +7,7 @@ bash  -c "$(curl -fsSL https://raw.githubusercontent.com/huangyanxiong01/auto-un
 
 ## 升级到最新代理服务
 
-你只需要重新执行安装步骤即可
+只需要重新执行安装步骤即可
 
 ## 示例 Example
 ```bash
