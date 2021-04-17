@@ -65,7 +65,6 @@ usage() {
 }
 
 
-
 # Echo like ... with flag type and display message colors
 prompt () {
   case ${1} in
@@ -89,7 +88,7 @@ function hasCommand() {
 
 function download {
   prompt -i "Info: Download exetuable file from github"
-  #wget https://github.com/nondanee/UnblockNeteaseMusic/archive/refs/heads/master.zip -O $installDir/netease.zip
+  wget https://github.com/nondanee/UnblockNeteaseMusic/archive/refs/heads/master.zip -O $installDir/netease.zip
   rm -rf $proxyDir
   unzip -o -qq $installDir/netease.zip -d $installDir/
   mv -f -u $installDir/UnblockNeteaseMusic-master  $proxyDir
@@ -185,10 +184,20 @@ function restartClient {
   prompt -s "Success: Restart netease-cloud-music."
 }
 
+
+#TODO port check
+# function portIsOpen {
+#   nc -z -v 0.0.0.0 $1 > /dev/null 2>&1
+#   if [[ $? == 0 ]];then
+#     prompt -e "ERROR: port $1 is opened, Please change to available port "
+#     exit 1
+#   fi
+# }
+
 function setup {
   mkdir -p $installDir
   prompt -i "Info: Install dependencies"
-  sudo apt-get install nginx wget curl unzip -y > /dev/null
+  sudo apt-get install nginx wget curl unzip net-tools -y > /dev/null
   prompt -s "Success: Complete install dependencies."
   if [[ $proxy != "" ]];then
       export http_proxy=$proxy

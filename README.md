@@ -4,7 +4,7 @@
 基于以下技术构建
 - Nginx
 - Systemd
-- Node
+- Node.js
 - /etc/hosts
 
 
@@ -29,7 +29,7 @@ bash  -c "$(curl -fsSL https://raw.githubusercontent.com/huangyanxiong01/auto-un
 
 ## 示例 Example
 ```bash
-./install.sh -s 5620 -h 5621 -p http://127.0.0.1:8889
+./install.sh -s 5620 -h 5621
 ```
 
 ## 文档 Docs
