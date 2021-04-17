@@ -1,8 +1,6 @@
 #! /usr/bin/env bash
 #set -x
 #global vars
-node=$(command -v node)
-client=$(command -v netease-cloud-music)
 proxy=""
 httpsPort="5620"
 httpPort="5621"
@@ -84,6 +82,9 @@ prompt () {
   esac
 }
 
+function hasCommand() {
+  command -v $1 > /dev/null
+}
 
 function download {
   prompt -i "Info: Download exetuable file from github"
@@ -91,7 +92,7 @@ function download {
   rm -rf $proxyDir
   unzip -o -qq $installDir/netease.zip -d $installDir/
   mv -f -u $installDir/UnblockNeteaseMusic-master  $proxyDir
-  if [[ $node == "" ]];then
+  if ! hasCommand node;then
       nodedir="node-$(wget -qO- https://nodejs.org/dist/latest/ | sed -nE 's|.*>node-(.*)\.pkg</a>.*|\1|p')-linux-x64"
       curl "https://nodejs.org/dist/latest/$nodedir.tar.gz" > $installDir/node.tar.gz
       tar xzf $installDir/node.tar.gz -C $installDir/
@@ -99,10 +100,12 @@ function download {
   fi
   prompt -s "Success: Download require exetuable file."
 }
+
 function setupHosts {
     echo "#music.163.com\n127.0.0.1 music.163.com\n127.0.0.1 interface.music.163.com" | sudo tee -a /etc/hosts > /dev/null
     prompt -s "Success: Add music.163.com domain to hosts."
 }
+
 function setupService {
     echo "$NETEASESERVICE" \
     | sed "s|{node}|$node|g"  \
@@ -171,7 +174,7 @@ function setup {
   restartClient
 }
 
-if [[ client == "" ]];then
+if ! hasCommand netease-cloud-music;then
   prompt -i "Info: Please install netease music https://music.163.com/#/download"
   exit 0
 fi
