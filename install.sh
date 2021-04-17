@@ -1,6 +1,7 @@
 #! /usr/bin/env bash
 #set -x
 #global vars
+node=$(command -v node)
 proxy=""
 httpsPort="5620"
 httpPort="5621"
@@ -46,9 +47,9 @@ Description=netease proxy service
 After=network.target
 [Service]
 User={u}
-Group={g}
+Group={u}
 WorkingDirectory={w}
-ExecStart={node} {h}
+ExecStart={node} {app}
 Restart=always
 [Install]
 WantedBy=multi-user.target
@@ -88,7 +89,7 @@ function hasCommand() {
 
 function download {
   prompt -i "Info: Download exetuable file from github"
-  wget https://github.com/nondanee/UnblockNeteaseMusic/archive/refs/heads/master.zip -O $installDir/netease.zip
+  #wget https://github.com/nondanee/UnblockNeteaseMusic/archive/refs/heads/master.zip -O $installDir/netease.zip
   rm -rf $proxyDir
   unzip -o -qq $installDir/netease.zip -d $installDir/
   mv -f -u $installDir/UnblockNeteaseMusic-master  $proxyDir
@@ -109,9 +110,8 @@ function setupHosts {
 function setupService {
     echo "$NETEASESERVICE" \
     | sed "s|{node}|$node|g"  \
-    | sed  "s|{h}|$proxyDir/app.js -p $httpPort:$httpsPort -f 59.111.181.60|g" \
+    | sed  "s|{app}|$proxyDir/app.js -p $httpPort:$httpsPort -f 59.111.181.60|g" \
     | sed  "s|{u}|$USER|g" \
-    | sed  "s|{g}|$USER|g" \
     | sed  "s|{w}|$proxyDir/|g" \
     | sudo tee /lib/systemd/system/netease.service > /dev/null
     sudo systemctl daemon-reload
@@ -122,14 +122,38 @@ function setupService {
     prompt -s "Success: Setup netease music proxy service."
 }
 
+function checkNginxConfigurationIscorrect {
+  failed=$(sudo nginx -t > /dev/null 2>&1 | grep  failed)
+  if [[ $failed != "" ]];then
+    sudo nginx -t
+    prompt -e "ERROR: $@"
+    exit 1
+  fi
+}
+
 function setupNginx {
-    echo "$NGINXCONF" \
-    | sed "s|{httpPort}|$httpPort|g" \
-    | sed  "s|{httpsPort}|$httpsPort|g" \
-    | sudo tee /etc/nginx/conf.d/netease.conf > /dev/null
-    #sudo nginx -t
-    sudo service nginx restart
-    prompt -s "Success: Setup nginx service."
+  message='Nginx checks the configuration file syntax failed. You can try resolve it'
+  checkNginxConfigurationIscorrect $message
+  neteaseConf="/etc/nginx/conf.d"
+  ngincConf="/etc/nginx/nginx.conf"
+  confd="include $neteaseConf/*.conf;"
+  sudo mkdir -p $neteaseConf/
+  if [[ ! -f $ngincConf ]];then
+    prompt -e "ERROR: $ngincConf: no such file or directory."
+    exit 1
+  fi
+  include=$(xargs <<< $(grep $neteaseConf/ $ngincConf))
+  if [[ $include != $confd ]];then
+    insertPosition=$(grep -n  include  $ngincConf | awk -F ":" '{print $1}' | tail -1)"i"
+    sed "$insertPosition $confd" $ngincConf | sudo tee $ngincConf > /dev/null
+  fi
+  echo "$NGINXCONF" \
+  | sed "s|{httpPort}|$httpPort|g" \
+  | sed  "s|{httpsPort}|$httpsPort|g" \
+  | sudo tee $neteaseConf/netease.conf > /dev/null
+  checkNginxConfigurationIscorrect $message
+  sudo service nginx restart
+  prompt -s "Success: Setup nginx service."
 }
 
 
@@ -141,7 +165,9 @@ function setupExec {
     if [[ ! $execCommand =~ .*"$ingore".*  ]];then
       execCommand="$execCommand $ingore"
       sed "s/Exec=netease-cloud-music.*/$execCommand/g" $desktop | sudo tee $desktop > /dev/null
-      xdg-desktop-menu forceupdate
+      if hasCommand xdg-desktop-menu;then
+        xdg-desktop-menu forceupdate
+      fi
     fi
     prompt -s "Success: Add $ingore to desktop exec command."
   else
@@ -163,6 +189,7 @@ function setup {
   mkdir -p $installDir
   prompt -i "Info: Install dependencies"
   sudo apt-get install nginx wget curl unzip -y > /dev/null
+  prompt -s "Success: Complete install dependencies."
   if [[ $proxy != "" ]];then
       export http_proxy=$proxy
   fi
