@@ -44,7 +44,7 @@ EOF
 read -r -d '' NETEASESERVICE <<'EOF'
 [Unit]
 Description=netease proxy service
-After=network.target
+After=network-online.target
 [Service]
 User={u}
 Group={u}
