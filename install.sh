@@ -117,6 +117,8 @@ function setupService {
     sudo systemctl stop netease.service
     sudo systemctl start netease.service
     sudo systemctl enable netease.service
+    sudo systemctl enable systemd-networkd-wait-online.service
+    sudo systemctl enable NetworkManager-wait-online.service
     #sudo systemctl status netease.service
     prompt -s "Success: Setup netease music proxy service."
 }
