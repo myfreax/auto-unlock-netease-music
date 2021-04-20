@@ -48,7 +48,7 @@ OPTIONS:
 ```
 
 ## Windows?
-欢迎你的PR
+[Windows 10解锁网易云音乐教程](https://www.myfreax.com/how-to-unlock-the-grayed-out-songs-of-netease-cloud-music/)
 
 ## 致谢
 
