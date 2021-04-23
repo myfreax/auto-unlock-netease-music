@@ -102,7 +102,7 @@ function download {
 }
 
 function setupHosts {
-    echo "#music.163.com\n127.0.0.1 music.163.com\n127.0.0.1 interface.music.163.com" | sudo tee -a /etc/hosts > /dev/null
+    printf "#music.163.com\n127.0.0.1 music.163.com\n127.0.0.1 interface.music.163.com" | sudo tee -a /etc/hosts > /dev/null
     prompt -s "Success: Add music.163.com domain to hosts."
 }
 
